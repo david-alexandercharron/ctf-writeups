@@ -68,15 +68,15 @@ Nmap done: 1 IP address (1 host up) scanned in 124.17 seconds
 
 This machine is using a vulnerable version of Icecast which is a streaming media server.
 
-```
-1. What type of vulnerability does Icecast use ? https://www.cvedetails.com/cve/CVE-2004-1561/
-Execute Code Overflow
 
-2. What is the CVE number for this vulnerability?
+> 1. What type of vulnerability does Icecast use ? https://www.cvedetails.com/cve/CVE-2004-1561/
+> Execute Code Overflow
+
+> 2. What is the CVE number for this vulnerability?
 CVE-2004-1561
 An exploit can be found on exploit-db here: https://www.exploit-db.com/exploits/568
 
-```
+
 
 Using msfconsole for exploitation
 ```
