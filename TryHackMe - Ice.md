@@ -1,14 +1,14 @@
 # CTF Writeup: TryHackMe - Ice
 
-## Challenge Description
+01-29-2023
+
+## Introduction
 
 Deploy & hack into a Windows machine, exploiting a very poorly secured media server.
 
 https://tryhackme.com/room/ice
 
-## Solution
-
-### Reconnaissance
+## Reconnaissance
 
 Let's begin by conducting a scan of the machine to identify any open ports. We then notice Icecast is running on port 8000, RDP on port 3389 and the hostname of the machine is DARK-PC.
 
@@ -64,7 +64,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 124.17 seconds
 ```
 
-### Gain Access
+## Gain Access
 
 This machine is using a vulnerable version of Icecast which is a streaming media server.
 
@@ -99,7 +99,7 @@ meterpreter >
 4. What is the only required setting which currently is blank?
 > rhosts
 
-### Escalating Privileges
+## Escalating Privileges
 
 Proceding with the previous meterpreter, let's escalate privileges.
 
