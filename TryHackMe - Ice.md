@@ -300,3 +300,68 @@ dark-pc$  WORKGROUP  (null)
 
 4. What is Dark's password?
 > Password01
+
+
+## Post-Exploitation
+
+Explore post-exploitation actions we can take on Windows.
+
+```
+meterpreter > help
+
+Stdapi: User interface Commands
+===============================
+
+    Command        Description
+    -------        -----------
+    screenshare    Watch the remote user's desktop in real time
+
+
+Stdapi: Webcam Commands
+=======================
+
+    Command        Description
+    -------        -----------
+    record_mic     Record audio from the default microphone for X seconds
+    ...
+
+Priv: Password database Commands
+================================
+
+    Command       Description
+    -------       -----------
+    hashdump      Dumps the contents of the SAM database
+
+
+Priv: Timestomp Commands
+========================
+
+    Command       Description
+    -------       -----------
+    timestomp     Manipulate file MACE attributes
+
+
+Kiwi Commands
+=============
+
+    Command                Description
+    -------                -----------
+    ...
+    golden_ticket_create   Create a golden kerberos ticket
+    ...
+```
+
+1. What command allows us to dump all of the password hashes stored on the system?
+> hashdump
+
+2. What command allows us to watch the remote user's desktop in real time?
+> screenshare
+
+3. How about if we wanted to record from a microphone attached to the system?
+> record_mic
+
+4. What command allows us to modify timestamps of files on the system
+> timestomp
+
+5. Mimikatz allows us to create what's called a `golden ticket`, allowing us to authenticate anywhere with ease. What command allows us to do this?
+> golden_ticket_create
