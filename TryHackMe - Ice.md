@@ -70,7 +70,7 @@ This machine is using a vulnerable version of Icecast which is a streaming media
 
 
 > 1. What type of vulnerability does Icecast use ? https://www.cvedetails.com/cve/CVE-2004-1561/
-> Execute Code Overflow
+Execute Code Overflow
 
 > 2. What is the CVE number for this vulnerability?
 CVE-2004-1561
