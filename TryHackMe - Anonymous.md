@@ -368,7 +368,8 @@ $ [ENTER]
 
 $ [ENTER]
 
-namelessone@anonymous:~$
+namelessone@anonymous:~$ cat user.txt 
+90d6f992585815ff991e68748c414740
 ```
 
 5. user.txt
