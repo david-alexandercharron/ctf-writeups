@@ -393,9 +393,3 @@ root
 
 6. root.txt
 > 4d930091c31a622a7ed10f27999af363
-
-
-## Commit
-git add TryHackMe\ -\ Ice.md
-git commit -m "Ice Looting"
-git push -u origin master
