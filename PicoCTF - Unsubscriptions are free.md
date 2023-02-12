@@ -73,6 +73,7 @@ This function will allocate memory for the user object.
 
 This function can add a message to the heap, and if the user object was previously freed, it can cause a use-after-free vulnerability by overwriting the user object and redirecting code execution.
 
+
 ### Exploit
 
 Now that we successfully were able to redirect code execution, let's create an exploit script to get the flag.
