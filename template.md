@@ -23,3 +23,9 @@
 ## Flag
 
 [Flag goes here]
+
+
+## Commit
+git add TryHackMe\ -\ Ice.md
+git commit -m "Ice Looting"
+git push -u origin master
