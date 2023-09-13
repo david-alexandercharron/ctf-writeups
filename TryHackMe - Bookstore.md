@@ -68,7 +68,77 @@ sid@bookstore:~$ cat user.txt
 
 ## **5. Privilege Escalation**
 
-On the server, a setuid binary named `try-harder` was discovered. After a local disassembly and reverse engineering, it was determined that the program performs an XOR operation against specific inputs. Calculating the correct input granted us a root shell:
+On the server, a setuid binary named `try-harder` was discovered. After a local disassembly and reverse engineering, it was determined that the program performs an XOR operation against specific inputs.
+
+### Disassembly of `try-harder` Binary
+
+Upon disassembling the `try-harder` binary, we obtained the following assembly code for the main function:
+
+```assembly
+   0x00005555555547aa <+0>:    push   rbp
+   0x00005555555547ab <+1>:    mov    rbp,rsp
+   0x00005555555547ae <+4>:    sub    rsp,0x20
+   0x00005555555547b2 <+8>:    mov    rax,QWORD PTR fs:0x28
+   0x00005555555547bb <+17>:   mov    QWORD PTR [rbp-0x8],rax
+   0x00005555555547bf <+21>:   xor    eax,eax
+   0x00005555555547c1 <+23>:   mov    edi,0x0
+   0x00005555555547c6 <+28>:   call   0x555555554680 <setuid@plt>
+   0x00005555555547cb <+33>:   mov    DWORD PTR [rbp-0x10],0x5db3
+   0x00005555555547d2 <+40>:   lea    rdi,[rip+0xfb]        # 0x5555555548d4
+   0x00005555555547d9 <+47>:   call   0x555555554640 <puts@plt>
+   0x00005555555547de <+52>:   lea    rax,[rbp-0x14]
+   0x00005555555547e2 <+56>:   mov    rsi,rax
+   0x00005555555547e5 <+59>:   lea    rdi,[rip+0x102]        # 0x5555555548ee
+   0x00005555555547ec <+66>:   mov    eax,0x0
+   0x00005555555547f1 <+71>:   call   0x555555554670 <__isoc99_scanf@plt>
+   0x00005555555547f6 <+76>:   mov    eax,DWORD PTR [rbp-0x14]
+   0x00005555555547f9 <+79>:   xor    eax,0x1116
+   0x00005555555547fe <+84>:   mov    DWORD PTR [rbp-0xc],eax
+   0x0000555555554801 <+87>:   mov    eax,DWORD PTR [rbp-0x10]
+   0x0000555555554804 <+90>:   xor    DWORD PTR [rbp-0xc],eax
+   0x0000555555554807 <+93>:   cmp    DWORD PTR [rbp-0xc],0x5dcd21f4
+   0x000055555555480e <+100>:  jne    0x555555554823 <main+121>
+```
+
+Key observations:
+
+1. The challenge's success criteria: Bypass the jump at `<+100>`.
+```assembly
+   0x000055555555480e <+100>:  jne    0x555555554823 <main+121>
+```
+
+2. A value `0x5db3 (23987)` is assigned to a variable at `rbp-0x10`.
+```assembly
+   0x00005555555547cb <+33>:   mov    DWORD PTR [rbp-0x10],0x5db3
+```
+
+3. User input is taken and XORed with `0x1116 (4374)` before being stored at `rbp-0xc`.
+```assembly
+   0x00005555555547f1 <+71>:   call   0x555555554670 <__isoc99_scanf@plt>
+   0x00005555555547f6 <+76>:   mov    eax,DWORD PTR [rbp-0x14]
+   0x00005555555547f9 <+79>:   xor    eax,0x1116
+   0x00005555555547fe <+84>:   mov    DWORD PTR [rbp-0xc],eax
+```
+
+4. For a successful bypass, XORing the value at `rbp-0x10` with the result of our XORed input should match `0x5dcd21f4 (1573724660)`.
+```assembly
+   0x0000555555554801 <+87>:   mov    eax,DWORD PTR [rbp-0x10]
+   0x0000555555554804 <+90>:   xor    DWORD PTR [rbp-0xc],eax
+   0x0000555555554807 <+93>:   cmp    DWORD PTR [rbp-0xc],0x5dcd21f4
+```
+
+Resulting input calculation:
+```
+our_input = 0x5db3 ^ 0x1116 ^ 0x5dcd21f4 = 1573743953
+```
+or
+```
+our_input = 23987 ^ 4374 ^ 1573724660 = 1573743953
+```
+
+### Getting a root shell
+
+Calculating the correct input granted us a root shell:
 
 ```bash
 sid@bookstore:~$ ./try-harder 
